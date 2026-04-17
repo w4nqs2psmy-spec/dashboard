@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App Dashboard — Antti Leppilampi</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #F7F5F0; color: #1A1A18; min-height: 100vh; padding: 48px 40px; }
+  .page { max-width: 920px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1.5px solid #1A1A18; }
+  .title { font-size: 13px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; }
+  .subtitle { font-family: 'DM Mono', monospace; font-size: 11px; color: #999; letter-spacing: 0.05em; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .category { background: #fff; border: 1px solid #E4E1D8; border-radius: 14px; padding: 18px 18px 16px; }
+  .category.wide { grid-column: span 2; }
+  .cat-header { display: flex; align-items: center; gap: 7px; margin-bottom: 14px; }
+  .cat-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .cat-name { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #999; }
+  .apps { display: flex; flex-wrap: wrap; gap: 7px; }
+  a.app {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 11px 6px 7px; border-radius: 9px;
+    border: 1px solid #EDEBE4; background: #FAFAF8;
+    text-decoration: none; color: inherit;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  }
+  a.app:hover { border-color: #AAAAAA; background: #F0EDE6; transform: translateY(-1px); }
+  a.app:active { transform: translateY(0); }
+  .app-logo { width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; background: #F0EDE6; }
+  .app-logo img { width: 18px; height: 18px; object-fit: contain; display: block; }
+  .fallback { font-size: 9px; font-weight: 500; font-family: 'DM Mono', monospace; color: #888; display: none; }
+  .app-name { font-size: 12px; font-weight: 400; color: #1A1A18; white-space: nowrap; }
+  footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid #E4E1D8; display: flex; justify-content: space-between; }
+  .footer-count { font-family: 'DM Mono', monospace; font-size: 11px; color: #bbb; }
+  .footer-date { font-family: 'DM Mono', monospace; font-size: 11px; color: #ccc; }
+  @media print {
+    body { background: #fff; padding: 24px; }
+    a.app { text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <span class="title">App Dashboard</span>
+    <span class="subtitle">Antti Leppilampi · 2026</span>
+  </header>
+  <div class="grid">
+
+    <div class="category wide">
+      <div class="cat-header"><div class="cat-dot" style="background:#D4691E"></div><span class="cat-name">AI</span></div>
+      <div class="apps">
+        <a class="app" href="https://claude.ai" target="_blank"><div class="app-logo"><img src="https://www.anthropic.com/favicon.ico" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='block'"><span class="fallback">C</span></div><span class="app-name">Claude</span></a>
+        <a class="app" href="https://www.wisprflow.ai" target="_blank"><div class="app-logo"><img src="https://www.wisprflow.ai/favicon.ico" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='block'"><span class="fallback">Wf</span></div><span class="app-name">WisprFlow</span></a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="cat-header"><div class="cat-dot" style="background:#7C5CBF"></div><span class="cat-name">Tietojen etsiminen</span></div>
+      <div class="apps">
+        <a class="app" href="https://consensus.app" target="_blank"><div class="app-logo"><img src="https://consensus.app/favicon.ico" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='block'"><span class="fallback">Co</span></div><span class="app-name">Consensus</span></a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="cat-header"><div class="cat-dot" style="background:#2D6A4F"></div><span class="cat-name">Koodaaminen</span></div>
+      <div class="apps">
+        <a class="app" href="https://github.com/features/copilot" target="_blank"><div class="app-logo"><img src="https://github.com/favicon.ico" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='block'"><span class="fallback">GH</span></div><span class="app-name">GitHub Copilot</span></a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="cat-header"><div class="cat-dot" style="background:#C0392B"></div><span class="cat-name">Appien rakennus</span></div>
+      <div class="apps">
+        <a class="app" href="https://appwrite.io" target="_blank"><div class="app-logo"><img src="https://appwrite.io/favicon.ico" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='block'"><span class="fallback">Aw</span></div><span class="app-name">Appwrite</span></a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="cat-header"><div class="cat-dot" style="background:#1A6FA8"></div><span class="cat-name">Selain</span></div>
+      <div class="apps">
+        <a class="app" href="https://arc.net" target="_blank"><div class="app-logo"><img src="https://arc.net/favicon.ico" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='block'"><span class="fallback">Arc</span></div><span class="app-name">Arc</span></a>
+      </div>
+    </div>
+
+    <div class="category wide">
+      <div class="cat-header"><div class="cat-dot" style="background:#6B4C3B"></div><span class="cat-name">Tietojen hallinta</span></div>
+      <div class="apps">
+        <a class="app" href="https://notion.so" target="_blank"><div class="app-logo"><img src="https://www.notion.so/favicon.ico" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='block'"><span class="fallback">No</span></div><span class="app-name">Notion</span></a>
+        <a class="app" href="https://obsidian.md" target="_blank"><div class="app-logo"><img src="https://obsidian.md/favicon.ico" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='block'"><span class="fallback">Ob</span></div><span class="app-name">Obsidian</span></a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="cat-header"><div class="cat-dot" style="background:#B7410E"></div><span class="cat-name">Muotoilu</span></div>
+      <div class="apps">
+        <a class="app" href="https://www.sketch.com" target="_blank"><div class="app-logo"><img src="https://www.sketch.com/favicon.ico" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='block'"><span class="fallback">Sk</span></div><span class="app-name">Sketch</span></a>
+        <a class="app" href="https://www.figma.com" target="_blank"><div class="app-logo"><img src="https://www.figma.com/favicon.ico" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='block'"><span class="fallback">Fg</span></div><span class="app-name">Figma</span></a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="cat-header"><div class="cat-dot" style="background:#8B5CF6"></div><span class="cat-name">Esitykset</span></div>
+      <div class="apps">
+        <a class="app" href="https://www.beautiful.ai" target="_blank"><div class="app-logo"><img src="https://www.beautiful.ai/favicon.ico" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='block'"><span class="fallback">Ba</span></div><span class="app-name">Beautiful.ai</span></a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="cat-header"><div class="cat-dot" style="background:#2E7D32"></div><span class="cat-name">Kirjoittaminen</span></div>
+      <div class="apps">
+        <a class="app" href="https://www.craft.do" target="_blank"><div class="app-logo"><img src="https://www.craft.do/favicon.ico" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='block'"><span class="fallback">Cr</span></div><span class="app-name">Craft</span></a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="cat-header"><div class="cat-dot" style="background:#D97706"></div><span class="cat-name">Kuvat</span></div>
+      <div class="apps">
+        <a class="app" href="https://icons8.com" target="_blank"><div class="app-logo"><img src="https://icons8.com/favicon.ico" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='block'"><span class="fallback">I8</span></div><span class="app-name">Icons8</span></a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="cat-header"><div class="cat-dot" style="background:#0E7490"></div><span class="cat-name">Opettelu</span></div>
+      <div class="apps">
+        <a class="app" href="https://www.educative.io" target="_blank"><div class="app-logo"><img src="https://www.educative.io/favicon.ico" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='block'"><span class="fallback">Ed</span></div><span class="app-name">Educative</span></a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="cat-header"><div class="cat-dot" style="background:#BE185D"></div><span class="cat-name">Automatisointi</span></div>
+      <div class="apps">
+        <a class="app" href="https://n8n.io" target="_blank"><div class="app-logo"><img src="https://n8n.io/favicon.ico" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='block'"><span class="fallback">n8</span></div><span class="app-name">n8n</span></a>
+      </div>
+    </div>
+
+    <div class="category wide">
+      <div class="cat-header"><div class="cat-dot" style="background:#374151"></div><span class="cat-name">Data & ML</span></div>
+      <div class="apps">
+        <a class="app" href="https://deepnote.com" target="_blank"><div class="app-logo"><img src="https://deepnote.com/favicon.ico" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='block'"><span class="fallback">Dn</span></div><span class="app-name">Deepnote</span></a>
+        <a class="app" href="https://wandb.ai" target="_blank"><div class="app-logo"><img src="https://wandb.ai/favicon.ico" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='block'"><span class="fallback">W&B</span></div><span class="app-name">Weights & Biases</span></a>
+      </div>
+    </div>
+
+  </div>
+  <footer>
+    <span class="footer-count">18 sovellusta · 13 kategoriaa</span>
+    <span class="footer-date">April 2026</span>
+  </footer>
+</div>
+</body>
+</html>
