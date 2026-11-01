@@ -1,12 +1,18 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { AnalysisResult, GradeTrend } from '@/types'
-
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+import { demoAnalysis } from './demo'
 
 const TREND_FI: Record<GradeTrend, string> = {
   improving: 'paraneva',
   stable: 'vakaa',
   declining: 'heikkenevä',
+}
+
+const RISK_LEVELS = ['low', 'medium', 'high']
+
+export function isDemoMode(): boolean {
+  const key = process.env.ANTHROPIC_API_KEY
+  return process.env.DEMO_MODE === 'true' || !key || key.startsWith('your_')
 }
 
 export async function analyzeStudent(data: {
@@ -17,6 +23,10 @@ export async function analyzeStudent(data: {
   wellbeing_score: number
   teacher_notes: string
 }): Promise<AnalysisResult> {
+  if (isDemoMode()) return demoAnalysis(data)
+
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
   const prompt = `Olet suomalaisen peruskoulun oppilashuollon asiantuntija. Tehtäväsi on analysoida oppilaan tilannetta ja tuottaa kolme erillistä viestiä: opettajalle, oppilaalle ja huoltajalle.
 
 Oppilaan tiedot:
@@ -55,5 +65,8 @@ Kirjoita kaikki viestit suomeksi. Vältä viranomaiskieltä — käytä lämmint
   if (!jsonMatch) throw new Error('Claude ei palauttanut JSON-vastausta')
 
   const result = JSON.parse(jsonMatch[0]) as AnalysisResult
+  if (!RISK_LEVELS.includes(result.risk_level)) {
+    throw new Error(`Tuntematon riskitaso: ${result.risk_level}`)
+  }
   return result
 }

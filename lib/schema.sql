@@ -1,4 +1,3 @@
-export const CREATE_TABLES = `
 CREATE TABLE IF NOT EXISTS students (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
@@ -19,4 +18,3 @@ CREATE TABLE IF NOT EXISTS support_events (
   guardian_message TEXT NOT NULL,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
-`

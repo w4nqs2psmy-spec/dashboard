@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getDb } from '@/lib/db'
-import { analyzeStudent } from '@/lib/claude'
+import { analyzeStudent, isDemoMode } from '@/lib/claude'
 import { Student } from '@/types'
 
 export async function POST(request: Request) {
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     )
 
     const savedEvent = db.prepare('SELECT * FROM support_events WHERE id = ?').get(event.lastInsertRowid)
-    return NextResponse.json(savedEvent, { status: 201 })
+    return NextResponse.json({ ...(savedEvent as object), demo: isDemoMode() }, { status: 201 })
   } catch (err) {
     console.error(err)
     const message = err instanceof Error ? err.message : 'Tuntematon virhe'

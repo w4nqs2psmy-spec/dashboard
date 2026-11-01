@@ -31,6 +31,7 @@ export default function OpettajaPage() {
   const [analyzing, setAnalyzing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isDemo, setIsDemo] = useState(false)
 
   const loadStudents = useCallback(async () => {
     const res = await fetch('/api/students')
@@ -63,6 +64,7 @@ export default function OpettajaPage() {
         : null
     )
     setError(null)
+    setIsDemo(false)
   }
 
   const newStudent = () => {
@@ -74,22 +76,27 @@ export default function OpettajaPage() {
     setError(null)
   }
 
+  // Tallentaa lomakkeen nykyiset tiedot (uusi tai päivitys) ja palauttaa tallennetun oppilaan.
+  const saveStudent = async (): Promise<Student> => {
+    const url = selected ? `/api/students/${selected.id}` : '/api/students'
+    const res = await fetch(url, {
+      method: selected ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error ?? 'Tallennus epäonnistui')
+    setSelected(data)
+    setIsEditing(true)
+    return data
+  }
+
   const handleSave = async () => {
     setSaving(true)
     setError(null)
     try {
-      const url = isEditing && selected ? `/api/students/${selected.id}` : '/api/students'
-      const method = isEditing && selected ? 'PUT' : 'POST'
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
+      await saveStudent()
       await loadStudents()
-      setSelected(data)
-      setIsEditing(true)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Tallennus epäonnistui')
     } finally {
@@ -97,34 +104,31 @@ export default function OpettajaPage() {
     }
   }
 
-  const handleAnalyze = async () => {
-    if (!selected && !isEditing) {
-      await handleSave()
-    }
-    const targetId = selected?.id
-    if (!targetId) return
-
+  // Tallentaa aina ensin, jotta analyysi tehdään lomakkeen ajantasaisilla tiedoilla.
+  const handleSaveAndAnalyze = async () => {
     setAnalyzing(true)
     setError(null)
     try {
+      const student = await saveStudent()
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ student_id: targetId }),
+        body: JSON.stringify({ student_id: student.id }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
+      if (!res.ok) throw new Error(data.error ?? 'Analyysi epäonnistui')
       setAnalysisResult({
         risk_level: data.risk_level,
         teacher_message: data.teacher_message,
         student_message: data.student_message,
         guardian_message: data.guardian_message,
       })
-      await loadStudents()
+      setIsDemo(Boolean(data.demo))
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Analyysi epäonnistui')
     } finally {
       setAnalyzing(false)
+      await loadStudents()
     }
   }
 
@@ -270,48 +274,7 @@ export default function OpettajaPage() {
                   {saving ? 'Tallennetaan...' : 'Tallenna tiedot'}
                 </button>
                 <button
-                  onClick={async () => {
-                    if (selected) {
-                      await handleAnalyze()
-                    } else {
-                      setSaving(true)
-                      setError(null)
-                      try {
-                        const res = await fetch('/api/students', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify(form),
-                        })
-                        const data = await res.json()
-                        if (!res.ok) throw new Error(data.error)
-                        await loadStudents()
-                        setSelected(data)
-                        setIsEditing(true)
-                        setSaving(false)
-                        // Now analyze
-                        setAnalyzing(true)
-                        const res2 = await fetch('/api/analyze', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ student_id: data.id }),
-                        })
-                        const data2 = await res2.json()
-                        if (!res2.ok) throw new Error(data2.error)
-                        setAnalysisResult({
-                          risk_level: data2.risk_level,
-                          teacher_message: data2.teacher_message,
-                          student_message: data2.student_message,
-                          guardian_message: data2.guardian_message,
-                        })
-                        await loadStudents()
-                      } catch (e) {
-                        setError(e instanceof Error ? e.message : 'Virhe')
-                      } finally {
-                        setSaving(false)
-                        setAnalyzing(false)
-                      }
-                    }
-                  }}
+                  onClick={handleSaveAndAnalyze}
                   disabled={analyzing || saving || !form.name}
                   className="flex-1 px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-600 text-white text-sm font-medium disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
                 >
@@ -327,6 +290,13 @@ export default function OpettajaPage() {
                 </button>
               </div>
             </div>
+
+            {isDemo && analysisResult && (
+              <div className="rounded-xl bg-violet-50 border border-violet-200 text-violet-700 text-xs px-4 py-2">
+                🧪 Demotila: tämä arvio on tehty sääntöpohjaisesti valmiilla viestipohjilla, ei tekoälyllä.
+                Ota oikea analyysi käyttöön lisäämällä ANTHROPIC_API_KEY tiedostoon .env.local.
+              </div>
+            )}
 
             {/* Analysis result */}
             {analysisResult && (
